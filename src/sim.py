@@ -191,7 +191,7 @@ def _fdtd1d(prl, pim, V, abc, ra, rd):
     :returns: None
     """
     for n in range(len(prl)-1):
-        prl[n] = abc[n]*prl[n] - ra*(pim[n-1] - 2*pim[n] + pim[n+1]) + rd*V[n]*pim[n]
+        prl[n] = abc[n]*prl[n] - ra*(pim[n-1] - 2*pim[n] + pim[n+1]) + rd*(V[n])*pim[n]
     
     for n in range(len(pim)-1):
         pim[n] = abc[n]*pim[n] + ra*(prl[n-1] - 2*prl[n] + prl[n+1]) - rd*(V[n])*prl[n]
