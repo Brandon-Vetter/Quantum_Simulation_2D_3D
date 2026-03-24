@@ -1,4 +1,12 @@
 
 *.png
+!./docs/images
+*.jpeg
+*.gif
+*.mov
+*.mp4
 *.pdf
 *.pyc
+docs/_build/*
+docs/_static/*
+
