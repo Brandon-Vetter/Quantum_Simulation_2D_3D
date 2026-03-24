@@ -4,15 +4,23 @@ from constants import *
 
 
 def abc1d(sim_space, start_loc, dec=.5):
+    """
+    Create a pml for 1 demention
 
+    :param sim_space: a sim space varable to get dimentions
+    :param start_loc: where to start the pml
+    :param dec: how much to attenuate the simulation
 
-    ret_abc = np.ones(len(sim_space))
-    for n in range(round(len(sim_space)/2)):
-        if n < start_loc:
-            ret_abc[n] = 1 - dec*((start_loc - start_loc)/start_loc)**3
-        if (len(sim_space)-1) - n > len(sim_space) - start_loc:
-            ret_abc[(len(sim_space)-1) - n] = 1 - dec*((start_loc - start_loc)/start_loc)**3
-    return ret_abc
+    :returns: a pml value
+    """
+    pml = np.ones(sim_space.shape)
+    
+    for n in range(start_loc + 1):
+        xxn = (start_loc - n) / start_loc
+        pml[n] = 1 - .5 * xxn ** 3
+        pml[-n] = pml[n]    
+    
+    return pml
 
 def abcx2d(sim_space, start_loc, dec=.5):
     pml = np.ones(sim_space.shape)
