@@ -36,7 +36,93 @@ def source(t, prl, pim, V, ra, rd, part_id):
     """
     pass
 
-def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None):
+
+def fdtdndmp(steps, dimentions, particles, V, ra, rd, del_x, t=0, abc=None, attract=1):
+    """
+    Is the wrapper for the fdtd that rans partilces with the hartree approximation
+    
+    :param steps: how many steps to run simulation for
+    :param dimentions: how dimentions is the simulation
+    :param partilces: dictonary of all particles in sim.  Key is particle ID, 
+        value is a tuple of (prl, pim)
+    :param V: V field to add to the simulation
+    :param ra: ra value for the fdtd method
+    :param rd: rd value for the fdtd method
+    :param t: time value for rdtd method, default = 0
+    :param abc: is the pml. Default     
+    
+    :returns: Returns the coloumb effect for every particle
+    """
+    kernal = _hartree_kernal(V.shape, del_x)
+    Fkernal = np.fft.fft(kernal)
+    time = t
+    hf_part = {}
+    
+    
+    # setup the columb E field to 0 for each particle
+    for part_id in particles.keys():
+        hf_part[part_id] = np.zeros(V.shape, dtype=np.float64)
+    for step in range(steps):
+        for part_id, part in particles.items():
+            # iterate though each of the particles
+            hf = np.zeros(V.shape, dtype=np.float64) # set the columb effect for this particle to 0
+            for part_hf_id, hf_value in hf_part.items():
+                # iterate though each particle's columb effect
+                if part_hf_id == part_id:
+                    # if the current particle is the current columb effect, skip
+                    continue
+                # add the current particle's colomb effect to total columb
+                # add in passed E field to columb verable
+                hf += hf_value
+                hf += V
+
+
+            # run FDTD for where hf is the E field + partilce's colomb effect
+            if dimentions == 1:
+                _fdtd1dl(1, part[0], part[1], hf, abc, ra, rd, t=time, part_id = part_id)
+            elif dimentions == 2:
+                _fdtd2dl(1, part[0], part[1], hf, abc, ra, rd, t=time, part_id = part_id)
+            elif dimentions == 3:
+                _fdtd3dl(1, part[0], part[1], hf, abc, ra, rd, t=time, part_id = part_id)
+            else:
+                _fdtd1dl(1, part[0], part[1], hf, abc, ra, rd, t=time, part_id = part_id)
+        
+        # calulate the columb effect for each particle
+        for part_id, part in particles.items():
+            hp = part[0]**2 + part[1]**2
+            HP = np.fft.fft(hp)
+            HPT = Fkernal[0:int(len(Fkernal)/2)] * HP
+            hf = attract*np.fft.ifft(HPT)
+            hf_part[part_id] = hf.real
+            
+        time += 1
+        
+    # return the columb effect for every particle
+    for part_hf_id, hf_value in hf_part.items():
+        try:
+            hf += hf_value
+        except UnboundLocalError:
+            hf = None
+            break
+    return time, hf
+        
+    
+def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None, hf = None, part_id = 0):
+    """
+    Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
+    
+    :param steps: how many steps to run simulation for
+    :param dimentions: how dimentions is the simulation
+    :param prl: real part of the shrodinger equation.  Is pass by referance
+    :param pim: imaginary part of the shrodinger equation.  Is pass by referance
+    :param V: V field to add to the simulation
+    :param abc: is the pml
+    :param ra: ra value for the fdtd method
+    :param rd: rd value for the fdtd method
+    :param t: time value for rdtd method, default = 0
+    
+    :returns: Returns the elapsed time of the simulation
+    """
     if abc is None:
         abc = np.ones(prl.shape)
 
