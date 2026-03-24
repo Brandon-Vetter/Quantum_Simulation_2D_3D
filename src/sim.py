@@ -15,7 +15,7 @@ from matplotlib import cm
 from constants import *
 
 @jit
-def misc(t, prl, pim, V, ra, rd):
+def misc(t, prl, pim, V, ra, rd, part_id):
     """
     This is a userdefined function.  It should be overwritten.  Input any code
     to run in the FDTD here (like forour transform etc)
@@ -26,7 +26,7 @@ def misc(t, prl, pim, V, ra, rd):
     pass
 
 @jit
-def source(t, prl, pim, V, ra, rd):
+def source(t, prl, pim, V, ra, rd, part_id):
     """
     User Defined Source.  Should be overwritten.  Use Source library to build
     your own source.
@@ -41,16 +41,16 @@ def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None):
         abc = np.ones(prl.shape)
 
     if dimentions == 1:
-        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t)
+        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
     elif dimentions == 2:
-        return _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=t)
+        return _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
     elif dimentions == 3:
-        return _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=t)
+        return _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
     else:
-        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t)
+        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
 
 @jit
-def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0):
+def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     :param steps: how many steps to run simulation for
@@ -69,14 +69,14 @@ def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0):
         _fdtd1d(prl, pim, V, abc, ra, rd)
 
         t += 1
-        source(t, prl, pim, V, ra, rd)
-        misc(t, prl, pim, V, ra, rd)
+        source(t, prl, pim, V, ra, rd, part_id)
+        misc(t, prl, pim, V, ra, rd, part_id)
         
 
     return t
 
 @jit
-def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0):
+def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     :param steps: how many steps to run simulation for
@@ -95,13 +95,13 @@ def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0):
         _fdtd2d(prl, pim, V, abc, ra, rd)
 
         t += 1
-        source(t, prl, pim, V, ra, rd)
-        misc(t, prl, pim, V, ra, rd)
+        source(t, prl, pim, V, ra, rd, part_id)
+        misc(t, prl, pim, V, ra, rd, part_id)
     
     return t
         
 @jit    
-def _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=0):
+def _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     :param steps: how many steps to run simulation for
@@ -120,8 +120,8 @@ def _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=0):
         _fdtd3d(prl, pim, V, abc, ra, rd)
 
         t += 1
-        source(t, prl, pim, V, ra, rd)
-        misc(t, prl, pim, V, ra, rd)
+        source(t, prl, pim, V, ra, rd, part_id)
+        misc(t, prl, pim, V, ra, rd, part_id)
     return t
 
 @jit
