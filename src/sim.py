@@ -1,10 +1,12 @@
-"""
-This file contains the fdtd methods.  Contains 1D, 2D, and 3D methods.
+##############################################################################
+#: This file contains the fdtd methods.  Contains 1D, 2D, and 3D methods.
+#:
+#: :Author: Brandon Vetter
+#: :Date: 2/15/26
+#:
+#: Property of the University of Idaho
+##############################################################################
 
-:Author: Brandon Vetter
-:Date: 2/15/26
-:Licence: Apatche
-"""
 from numba import jit
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,8 +20,8 @@ from constants import *
 def misc(t, prl, pim, V, ra, rd, part_id):
     """
     This is a userdefined function.  It should be overwritten.  Input any code
-    to run in the FDTD here (like forour transform etc)
-    :return: none
+        to run in the FDTD here (like forour transform etc)
+    :returns: none
     
     Todo: Implement this as a yaml file
     """
@@ -29,7 +31,7 @@ def misc(t, prl, pim, V, ra, rd, part_id):
 def source(t, prl, pim, V, ra, rd, part_id):
     """
     User Defined Source.  Should be overwritten.  Use Source library to build
-    your own source.
+        your own source.
     :returns: none
     
     Todo: implement this as a yaml file.

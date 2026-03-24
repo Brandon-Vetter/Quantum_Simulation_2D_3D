@@ -1,15 +1,9 @@
-"""quantum.constants
-
+"""
 Physical and simulation constants used throughout the project.
 
-:filename: constants.py
-:author: Brandon Vetter <brandon.w.vetter@gmail.com>
-:license: Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
-:summary: Centralized physical constants and semiconductor effective masses
-    used by the simulations.
+:author: Brandon Vetter
+:date: 4/12/26
 
-This module centralizes commonly used physical constants (with units)
-and a few semiconductor effective-mass values used by the simulations.
 
 Constants
 ---------
@@ -30,12 +24,10 @@ Semiconductor effective masses (relative to ``m0``)
  - ``GaAs``: gallium-arsenide effective mass (m*/m0)
  - ``Ge``: germanium effective mass (m*/m0)
 
-Note: numeric values are approximate and chosen for quick simulations and
-examples; use higher-precision or library-provided constants for production
-calculations when needed.
+ 
+ Property of the University of Idaho
 """
 
-from enum import Enum
 
 ######################
 # Global Varables
