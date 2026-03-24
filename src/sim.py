@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sources
 import aabc
-import d2 as vf
+import vfields.d2 as vf
 from matplotlib import cm
 from constants import *
 
