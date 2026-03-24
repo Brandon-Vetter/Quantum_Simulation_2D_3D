@@ -62,4 +62,24 @@ Si = 1.08
 GaAs = 0.067
 Ge = 0.55
 
+# common varables
+eV = 1.602E-19
+q = 1.602E-19
+k_J = 1.38E-23
+k_eV = k_J/eV
+perm = 8.85E-14 # cm
+c = 3E8
+thermal_V_at_300 = (k_J*300)/q
 
+# silicion
+si_mn = .26*m0
+si_mp = .39*m0
+si_Eg = 1.12
+si_un = 1417
+si_up = 471
+si_lattice_cosnt = 5.43
+si_e_af = 4.05
+
+# dieletrics
+si_di = 11.8*perm
+siO2_di = 3.9*perm
