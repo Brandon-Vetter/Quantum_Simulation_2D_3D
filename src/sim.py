@@ -194,9 +194,63 @@ def _fdtd1d(prl, pim, V, abc, ra, rd):
         prl[n] = abc[n]*prl[n] - ra*(pim[n-1] - 2*pim[n] + pim[n+1]) + rd*V[n]*pim[n]
     
     for n in range(len(pim)-1):
-        pim[n] = abc[n]*pim[n] + ra*(prl[n-1] - 2*prl[n] + prl[n+1]) - rd*V[n]*prl[n]
-    
+        pim[n] = abc[n]*pim[n] + ra*(prl[n-1] - 2*prl[n] + prl[n+1]) - rd*(V[n])*prl[n]
 
+@jit
+def _hartree_kernal1d(NN, del_x, di=perm):
+    """
+    Creates a kernal of all values for the hartree approximation to convolve
+    with the particles.  For one dimention of particles
+    
+    :param NN: size of the simulation
+    :param del_x: change in x
+    :param abc: Is the pml around the simulation in any
+    :param di: ebsolon value for material
+
+    :returns: hartree_kernal
+    """
+    const = (eV)**2/(4*np.pi*di*del_x)
+    hartree_kernal = np.zeros(2*NN, dtype=np.complex128)
+    hartree_kernal[0] = const
+    hartree_kernal[-1] = const
+    for i in range(1, NN-1):
+        hartree_kernal[i] = const/(0-i)
+        hartree_kernal[-i] = const/(0-i)
+    
+    return hartree_kernal*const
+
+def _hartree_kernal(dementions, del_x, di=perm):
+    if len(dementions) == 1:
+        return _hartree_kernal1d(dementions[0], del_x, di=perm)
+    
+    if len(dementions) == 2:
+        harx = _hartree_kernal1d(dementions[0], del_x, di=perm)
+        hary = _hartree_kernal1d(dementions[1], del_x, di=perm)
+        HX, HY = np.meshgrid(harx, hary)
+        return HX, HY
+
+    if len(dementions) == 3:
+        harx = _hartree_kernal1d(dementions[0], del_x, di=perm)
+        hary = _hartree_kernal1d(dementions[1], del_x, di=perm)
+        harz = _hartree_kernal1d(dementions[2], del_x, di=perm)
+        HX, HY, HZ = np.meshgrid(harx, hary, harz)
+        return HX, HY, HZ
+
+@jit
+def folk1d(prl1, pim1, prl2, pim2, del_x, p1_spin, p2_spin, di=si_di):
+    kronecker = 1 if p1_spin == p2_spin else 0
+    const = (eV)**2/(4*np.pi*di)
+    psi1 = prl1 + pim1*1j
+    psi2 = prl2 + pim2*1j
+    hartree = np.zeros(len(prl1), dtype=np.complex128)
+    for i in range(len(hartree)):
+        for j in range(len(prl2)):
+            if (i - j != 0):
+                hartree[i] += (((psi2[j])**2)/(del_x*(i - j)))
+                - ((np.conjugate(psi1[j])*psi2[j])/(del_x*(i - j)))*kronecker
+    
+    return hartree*const
+        
 if __name__ == "__main__":
     dt = 5e-17
     @jit 
