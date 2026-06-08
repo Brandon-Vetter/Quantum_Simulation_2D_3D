@@ -12,6 +12,7 @@ import matplotlib.animation as animation
 from functools import partial
 from constants import *
 from sim import *
+import sim
 
 sigma = .2
 lambd = .01*eV2J
@@ -31,6 +32,7 @@ def source(t, prl, pim, V, ra, rd, part_id):
     else:
         sources.psource1d(t, 3200, prl, pim, dt, .02)
 
+sim.source = source
 
 x = np.linspace(0, X_size*del_x, X_size)
 pml = aabc.abc1d(x, 400)
