@@ -87,7 +87,7 @@ def draw_circular_exp(V, center_x, center_y, radius, alpha, force=False):
                 else:
                     V[i][j] += (-np.exp(-alpha*np.abs(i - center_x)) - np.exp(-alpha*np.abs(j - center_y)))*eV2J
 
-def draw_circular_coulmbc(V, center_x, center_y, radius, qc, force=False):
+def draw_circular_coulmbc(V, center_x, center_y, radius, qc, del_x, di=perm, force=False):
     """
     draws a circular Coulomb potential in the V field
 
@@ -99,16 +99,15 @@ def draw_circular_coulmbc(V, center_x, center_y, radius, qc, force=False):
     :param force=False: If to force to specific value or add it
     """
 
-    for i in range(len(V)-1):
-        for j in range(len(V[0])-1):
+    for i in range(len(V)):
+        for j in range(len(V[0])):
             rad = (i - center_x)**2 + (j - center_y)**2
             if rad <= radius**2:
                 try:
                     if force:
-                        V[i][j] = (((qc)/(4*np.pi*si_di*np.sqrt((i-center_x)**2+(j-center_y)**2))))*eV2J
+                        V[i][j] = (((qc)/(4*np.pi*di*del_x*np.sqrt((i-center_x)**2+(j-center_y)**2))))*eV**2
                     else:
-                        
-                            V[i][j] += (((qc)/(4*np.pi*si_di*np.sqrt((i-center_x)**2+(j-center_y)**2))))*eV2J
+                        V[i][j] += (((qc)/(4*np.pi*di*del_x*np.sqrt((i-center_x)**2+(j-center_y)**2))))*eV**2
                 except ZeroDivisionError:
                     continue
 
