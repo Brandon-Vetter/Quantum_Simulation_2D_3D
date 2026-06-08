@@ -46,6 +46,26 @@ def draw_cylender(V, center_x, center_y, radius, E, force=False):
                 else:
                     V[i][j] += E*eV2J
 
+def draw_hollow_cylender(V, center_x, center_y, radius, value, force=False):
+    """
+    draws a cylinder in the V field
+
+    :param V: V field
+    :param center_x: x center of the cylinder
+    :param center_y: y center of the cylinder
+    :param radius: radius of the cylinder
+    :param E: value to set or add
+    :param force=False: If to force to specific value or add it
+    """
+    for i in range(len(V)-1):
+        for j in range(len(V[0])-1):
+            rad = (i - center_x)**2 + (j - center_y)**2
+            if rad == radius**2:
+                if force:
+                    V[i][j] = value
+                else:
+                    V[i][j] += value
+
 def draw_circular_exp(V, center_x, center_y, radius, alpha, force=False):
     """
     draws a circular exponential in the V field
