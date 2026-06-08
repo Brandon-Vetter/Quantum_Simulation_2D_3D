@@ -9,4 +9,5 @@
 *.pyc
 docs/_build/*
 docs/_static/*
-
+*.npy
+*.csv
