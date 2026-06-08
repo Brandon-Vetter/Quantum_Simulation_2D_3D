@@ -12,7 +12,7 @@ import numpy as np
 from constants import *
 
 @jit
-def plxsource(t, x, prl, pim, dt, Ein):
+def plxsource(t, x, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         plane source on a specific x plane
 
@@ -36,13 +36,17 @@ def plxsource(t, x, prl, pim, dt, Ein):
                 for q in range(0, len(prl[0][0]) - 1):
                 
 
-                        aaa = np.sin(2*np.pi*q/99)
+                        if T_len == 0:
+                            aaa = 1
+                        else:
+                            w = np.pi/(2*T_len)
+                            aaa = np.sin(q*w + phase_shift)
                 #            aaa = sin(2*pi*m/49)
                 #            ptrans[m] = aaa
                         prl[x,m,q] = prl[x,m,q] + aaa*prl_add
 
 @jit
-def lxysource3d(t, x, y, prl, pim, dt, Ein):
+def lxysource3d(t, x, y, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         line source on xy plane in 3d
 
@@ -66,13 +70,17 @@ def lxysource3d(t, x, y, prl, pim, dt, Ein):
         for q in range(0, len(prl[0][0]) - 1):
             
 
-            aaa = np.sin(2*np.pi*q/99)
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(q*w + phase_shift)
     #            aaa = sin(2*pi*m/49)
     #            ptrans[m] = aaa
             prl[x,y,q] = prl[x,y,q] + aaa*prl_add
 
 @jit
-def lxzsource3d(t, x, z, prl, pim, dt, Ein):
+def lxzsource3d(t, x, z, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         line source on xz plane in 3d
 
@@ -96,13 +104,17 @@ def lxzsource3d(t, x, z, prl, pim, dt, Ein):
         for m in range(0, len(prl[0]) - 1):
             
 
-            aaa = np.sin(2*np.pi*m/99)
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(m*w + phase_shift)
     #            aaa = sin(2*pi*m/49)
     #            ptrans[m] = aaa
             prl[x,m,z] = prl[x,m,z] + aaa*prl_add
 
 @jit
-def lyzsource3d(t, y, z, prl, pim, dt, Ein):
+def lyzsource3d(t, y, z, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         line source on yz plane in 3d
 
@@ -126,13 +138,17 @@ def lyzsource3d(t, y, z, prl, pim, dt, Ein):
         for i in range(0, len(prl) - 1):
             
 
-            aaa = np.sin(2*np.pi*i/99)
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(i*w + phase_shift)
     #            aaa = sin(2*pi*m/49)
     #            ptrans[m] = aaa
             prl[i,y,z] = prl[i,y,z] + aaa*prl_add
 
 @jit
-def plysource(t, y, prl, pim, dt, Ein):
+def plysource(t, y, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         plane source on a specific y plane
 
@@ -156,13 +172,17 @@ def plysource(t, y, prl, pim, dt, Ein):
             for q in range(0, len(prl[0][0]) - 1):
                 
     
-                aaa = np.sin(2*np.pi*q/99)
+                if T_len == 0:
+                    aaa = 1
+                else:
+                    w = np.pi/(2*T_len)
+                    aaa = np.sin(q*w + phase_shift)
         #            aaa = sin(2*pi*m/49)
         #            ptrans[m] = aaa
-                prl[i,y,q] = prl[x,y,q] + aaa*prl_add
+                prl[i,y,q] = prl[i,y,q] + aaa*prl_add
 
 @jit
-def plzsource(t, z, prl, pim, dt, Ein):
+def plzsource(t, z, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         plane source on a specific z plane
 
@@ -186,7 +206,11 @@ def plzsource(t, z, prl, pim, dt, Ein):
             for m in range(0, len(prl[0]) - 1):
                 
     
-                aaa = np.sin(2*np.pi*m/99)
+                if T_len == 0:
+                    aaa = 1
+                else:
+                    w = np.pi/(2*T_len)
+                    aaa = np.sin(m*w + phase_shift)
         #            aaa = sin(2*pi*m/49)
         #            ptrans[m] = aaa
                 prl[i,m,z] = prl[i,m,z] + aaa*prl_add
@@ -214,11 +238,12 @@ def psource3d(t, x, y, z, prl, pim, dt, Ein):
         prl_add = 0.01*np.exp(-1.*((t-TC)/sig)**2)*np.cos(omg_in*(t-TC))
 
         #        ptrans = np.zeros(MM)
+        aaa = 1
                 
     
 #            aaa = sin(2*pi*m/49)
 #            ptrans[m] = aaa
-        prl[x,y,z] = prl[x,y,z] + .05*prl_add
+        prl[x,y,z] = prl[x,y,z] + aaa*prl_add
                 
 @jit
 def psource2d(t, x, y, prl, pim, dt, Ein):
@@ -242,11 +267,12 @@ def psource2d(t, x, y, prl, pim, dt, Ein):
         prl_add = 0.01*np.exp(-1.*((t-TC)/sig)**2)*np.cos(omg_in*(t-TC))
 
         #        ptrans = np.zeros(MM)
+        aaa = 1
                 
 
 #            aaa = sin(2*pi*m/49)
 #            ptrans[m] = aaa
-        prl[x,y] = prl[x,y] + .05*prl_add
+        prl[x,y] = prl[x,y] + aaa*prl_add
 
 @jit
 def psource1d(t, x, prl, pim, dt, Ein):
@@ -269,12 +295,13 @@ def psource1d(t, x, prl, pim, dt, Ein):
         
         prl_add = 0.01*np.exp(-1.*((t-TC)/sig)**2)*np.cos(omg_in*(t-TC))
 
+        aaa = 1
 #            aaa = sin(2*pi*m/49)
 #            ptrans[m] = aaa
-        prl[x] = prl[x] + .05*prl_add
+        prl[x] = prl[x] + aaa*prl_add
 
 @jit
-def lxsource2d(t, x, prl, pim, dt, Ein):
+def lxsource2d(t, x, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         line source on x in 2d
 
@@ -297,13 +324,17 @@ def lxsource2d(t, x, prl, pim, dt, Ein):
         for m in range(0, len(prl[0]) - 1):
             
 
-            aaa = np.sin(2*np.pi*m/99)
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(m*w + phase_shift)
     #            aaa = sin(2*pi*m/49)
     #            ptrans[m] = aaa
             prl[x,m] = prl[x,m] + aaa*prl_add
 
 @jit
-def lysource2d(t, y, prl, pim, dt, Ein):
+def lysource2d(t, y, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         """
         line source on y in 2d
 
