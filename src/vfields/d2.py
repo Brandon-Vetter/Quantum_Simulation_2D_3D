@@ -119,3 +119,7 @@ def draw_Efield_circle(x, y, V):
     :param V: V field
     """
     equation = np.exp(-V)
+
+def draw_circular_line(line, plane, x_center, y_center):
+    for i in range(len(line)):
+        draw_hollow_cylender(plane, x_center, y_center, i, line[-i], force=False)
