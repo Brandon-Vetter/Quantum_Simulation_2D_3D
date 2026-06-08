@@ -354,10 +354,44 @@ def lysource2d(t, y, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
         prl_add = 0.01*np.exp(-1.*((t-TC)/sig)**2)*np.cos(omg_in*(t-TC))
 
         #        ptrans = np.zeros(MM)
+
         for i in range(0, len(prl) - 1):
             
 
-            aaa = np.sin(2*np.pi*i/99)
-    #            aaa = sin(2*pi*m/49)
-    #            ptrans[m] = aaa
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(i*w + phase_shift)
+            prl[i,y] = prl[i,y] + aaa*prl_add
+
+@jit
+def lysource2d_gauss(t, y, prl, pim, dt, Ein, T_len = 0, phase_shift=0):
+        """
+        line source on y in 2d
+
+        :param t: time
+        :param y: y coordinate
+        :param prl: Real part of Schrödinger
+        :param pim: Imaginary part of Schrödinger
+        :param dt: Change in time
+        :param Ein: Input energy (larger value will take longer to output)
+        """
+        T_per = h_nobar_eV/(Ein*dt)
+        sig = .65*T_per
+    #       T_per =round( h_nobar/(Ein*dt),2)
+        TC = 2*sig
+        
+        prl_add = 0.01*np.exp(-1.*((t-TC)/sig)**2)
+
+        #        ptrans = np.zeros(MM)
+
+        for i in range(0, len(prl) - 1):
+            
+
+            if T_len == 0:
+                aaa = 1
+            else:
+                w = np.pi/(2*T_len)
+                aaa = np.sin(i*w + phase_shift)
             prl[i,y] = prl[i,y] + aaa*prl_add
