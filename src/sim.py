@@ -10,6 +10,7 @@
 from numba import jit
 import sys
 import numpy as np
+import cmath
 import matplotlib.pyplot as plt
 import sources
 import aabc
@@ -20,7 +21,7 @@ from functools import partial
 from constants import *
 
 @jit
-def misc(t, prl, pim, V, ra, rd, part_id):
+def misc(t, prl, pim, V, ra, rd, part_id, *args):
     """
     This is a userdefined function.  It should be overwritten.  Input any code
         to run in the FDTD here (like forour transform etc)
@@ -112,7 +113,8 @@ def fdtdndmp(steps, dimentions, particles, V, ra, rd, del_x, t=0, abc=None, attr
     return time, hf
         
     
-def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None, hf = None, part_id = 0):
+def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None, part_id = 0,
+           source=source, misc=misc):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     
@@ -130,18 +132,22 @@ def fdtdnd(steps, dimentions, prl, pim, V, ra, rd, t=0, abc=None, hf = None, par
     """
     if abc is None:
         abc = np.ones(prl.shape)
+    
 
     if dimentions == 1:
-        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
+        return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id,
+                        source=source, misc=misc)
     elif dimentions == 2:
-        return _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
+        return _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id,
+                        source=source, misc=misc)
     elif dimentions == 3:
         return _fdtd3dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
     else:
         return _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=t, part_id = part_id)
 
 @jit
-def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
+def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0, source=source,
+             misc=misc):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     :param steps: how many steps to run simulation for
@@ -166,8 +172,19 @@ def _fdtd1dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
 
     return t
 
+# @jit
+# def descrete_forier_transform_square(dimentions, prl, pim, x, y, time, dt, E, forier):
+#     c_time = dt*time
+#     for i in range(len(E)):
+#         #print(i)
+#         forier[i] = (forier[i]+cmath.exp(-1j*(2*np.pi*E[i]/h_nobar_eV)*c_time))*(np.sum(prl[x[0]:x[1]][y[0]:y[1]]) - 1j*np.sum(pim[x[0]:x[1]][y[0]:y[1]]))
+        
+#     return forier
+
+
 @jit
-def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
+def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0, source=source,
+             misc=misc):
     """
     Base function for fdtd methods.  Manages time, and figures out what fdtd method to run
     :param steps: how many steps to run simulation for
@@ -188,6 +205,7 @@ def _fdtd2dl(steps, prl, pim, V, abc, ra, rd, t=0, part_id = 0):
         t += 1
         source(t, prl, pim, V, ra, rd, part_id)
         misc(t, prl, pim, V, ra, rd, part_id)
+        #descrete_forier_transform_square(2, prl, pim, [0,200], [140,141], t, .5e-16, E, forier)
     
     return t
         
