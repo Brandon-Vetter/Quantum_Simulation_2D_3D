@@ -59,7 +59,7 @@ eV = 1.602E-19
 q = 1.602E-19
 k_J = 1.38E-23
 k_eV = k_J/eV
-perm = 8.85E-14 # cm
+perm = 8.85E-12 # m
 c = 3E8
 thermal_V_at_300 = (k_J*300)/q
 
